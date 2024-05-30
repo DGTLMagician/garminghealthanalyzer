@@ -105,4 +105,4 @@ if __name__ == "__main__":
         start_date += delta
 
         # random sleep period to prevent detection
-        time.sleep(random.randint(50,120))
+        time.sleep(random.randint(120,300))
