@@ -89,6 +89,7 @@ if __name__ == "__main__":
         end_date = datetime.date.today()
 
     print(f"Syncing {start_date} until {end_date}")
+    # Add time delta
     delta = datetime.timedelta(days=7)
     end_date_step = (start_date + delta) - datetime.timedelta(days=1)
     # iterating over days from start to end
