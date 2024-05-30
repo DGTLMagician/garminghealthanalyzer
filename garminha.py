@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # Login to Garmin
     # If there's MFA, you'll be prompted during the login
     if os.path.isfile(garmintoken):
-        try
+        try:
             garth.resume(garmintoken)
             garth.client.username
         except GarthException:
