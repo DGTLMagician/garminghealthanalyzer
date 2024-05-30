@@ -90,7 +90,7 @@ if __name__ == "__main__":
         try:
             garth.resume(garmintoken)
             garth.client.username
-        except GarthException:
+        except:
             # Login to Garmin
             garth.login(email, password)
 
@@ -103,11 +103,11 @@ if __name__ == "__main__":
 
     # if command line arguments are passed use them to set the start and end date else use default values
     if len(sys.argv) > 1:
-        start_date = datetime.date.today() - datetime.timedelta(days=sys.argv[1])
+        start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
         end_date = datetime.date.today()
-    elif len(sys.arg) > 2:
-        start_date = datetime.date.today() - datetime.timedelta(days=sys.argv[1])
-        end_date = datetime.date.today() - datetime.timedelta(days=sys.argv[2])
+    elif len(sys.argv) > 2:
+        start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
+        end_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[2]))
     else:
         start_date = datetime.date.today() - datetime.timedelta(days=365*2)  # 2 years ago from today
         end_date = datetime.date.today()
