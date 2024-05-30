@@ -64,12 +64,12 @@ if __name__ == "__main__":
 
 
     # if command line arguments are passed use them to set the start and end date else use default values
-    if len(sys.argv) >= 1:
-        start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
-        end_date = datetime.date.today()
-    elif len(sys.argv) >= 2:
+    if len(sys.argv) >= 2:
         start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
         end_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[2]))
+    elif len(sys.argv) >= 1:
+        start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
+        end_date = datetime.date.today()
     else:
         start_date = datetime.date.today() - datetime.timedelta(days=365*2)  # 2 years ago from today
         end_date = datetime.date.today()
@@ -105,4 +105,4 @@ if __name__ == "__main__":
         start_date += delta
 
         # random sleep period to prevent detection
-        time.sleep(random.randint(120,300))
+        time.sleep(random.randint(60,200))
