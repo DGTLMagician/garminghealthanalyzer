@@ -76,9 +76,9 @@ if __name__ == "__main__":
 
     print(f"Syncing {start_date} until {end_date}")
     delta = datetime.timedelta(days=7)
-    end_date_step = start_date + delta
+    end_date_step = (start_date + delta) - 1
     # iterating over days from start to end
-    while end_date_step <= end_date:
+    while not end_date_step >= end_date:
         print(f"Working on Day: {start_date} End date Set: {end_date_step}")
         # fetching steps data for the day and writing to the InfluxDB
         if os.path.isfile(garmintoken):
@@ -102,6 +102,7 @@ if __name__ == "__main__":
             print(f"Fetching step data failed for {start_date}")
         #print(steps)
         start_date += delta
-
+        end_date_step += delta
+        
         # random sleep period to prevent detection
         time.sleep(random.randint(60,200))
