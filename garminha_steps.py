@@ -79,8 +79,7 @@ if __name__ == "__main__":
     end_date_step = start_date + delta
     # iterating over days from start to end
     while end_date_step <= end_date:
-        print("Working on Day: ")
-        print(start_date)
+        print(f"Working on Day: {end_date_step} End date Set: {end_date_step}")
         # fetching steps data for the day and writing to the InfluxDB
         if os.path.isfile(garmintoken):
             try:
