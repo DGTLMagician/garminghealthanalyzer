@@ -90,7 +90,7 @@ if __name__ == "__main__":
         try:
             garth.resume(garmintoken)
             garth.client.username
-        except:
+        except requests.exceptions.HTTPError:
             # Login to Garmin
             garth.login(email, password)
 
