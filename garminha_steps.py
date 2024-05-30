@@ -64,10 +64,10 @@ if __name__ == "__main__":
 
 
     # if command line arguments are passed use them to set the start and end date else use default values
-    if len(sys.argv) > 1:
+    if len(sys.argv) >= 1:
         start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
         end_date = datetime.date.today()
-    elif len(sys.argv) > 2:
+    elif len(sys.argv) >= 2:
         start_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[1]))
         end_date = datetime.date.today() - datetime.timedelta(days=int(sys.argv[2]))
     else:
