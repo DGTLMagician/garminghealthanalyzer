@@ -61,20 +61,7 @@ if __name__ == "__main__":
 
     # Login to Garmin
     # If there's MFA, you'll be prompted during the login
-    if os.path.isfile(garmintoken):
-        try:
-            garth.resume(garmintoken)
-            garth.client.username
-        except:
-            # Login to Garmin
-            garth.login(email, password)
 
-            garth.save(garmintoken)
-    else:
-        # Login to Garmin
-        garth.login(email, password)
-
-        garth.save(garmintoken)
 
     # if command line arguments are passed use them to set the start and end date else use default values
     if len(sys.argv) > 1:
@@ -95,6 +82,20 @@ if __name__ == "__main__":
         print("Working on Day: ")
         print(start_date)
         # fetching steps data for the day and writing to the InfluxDB
+        if os.path.isfile(garmintoken):
+            try:
+                garth.resume(garmintoken)
+                garth.client.username
+            except:
+                # Login to Garmin
+                garth.login(email, password)
+
+                garth.save(garmintoken)
+        else:
+            # Login to Garmin
+            garth.login(email, password)
+
+            garth.save(garmintoken)
         try:
             steps = garth.connectapi(f"/usersummary-service/stats/steps/daily/{start_date}/{end_date_step}")
             stepjson_to_influxdb(influxhost,influxport,influxdatabase,steps)
