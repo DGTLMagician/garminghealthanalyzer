@@ -86,20 +86,9 @@ if __name__ == "__main__":
 
     # Login to Garmin
     # If there's MFA, you'll be prompted during the login
-    if os.path.isfile(garmintoken):
-        try:
-            garth.resume(garmintoken)
-            garth.client.username
-        except:
-            # Login to Garmin
-            garth.login(email, password)
-
-            garth.save(garmintoken)
-    else:
-        # Login to Garmin
-        garth.login(email, password)
-
-        garth.save(garmintoken)
+    # Login to Garmin
+    garth.login(email, password)
+    garth.save(garmintoken)
 
     # if command line arguments are passed use them to set the start and end date else use default values
     if len(sys.argv) > 1:
