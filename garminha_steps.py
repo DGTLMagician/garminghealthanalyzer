@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     print(f"Syncing {start_date} until {end_date}")
     delta = datetime.timedelta(days=7)
-    end_date_step = (start_date + delta) - 1
+    end_date_step = (start_date + delta) - datetime.timedelta(days=1)
     # iterating over days from start to end
     while not end_date_step >= end_date:
         print(f"Working on Day: {start_date} End date Set: {end_date_step}")
@@ -103,6 +103,6 @@ if __name__ == "__main__":
         #print(steps)
         start_date += delta
         end_date_step += delta
-        
+
         # random sleep period to prevent detection
         time.sleep(random.randint(60,200))
