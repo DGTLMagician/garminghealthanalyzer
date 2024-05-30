@@ -102,10 +102,10 @@ if __name__ == "__main__":
         garth.save(garmintoken)
 
     # if command line arguments are passed use them to set the start and end date else use default values
-    if sys.argv > 1:
+    if len(sys.argv) > 1:
         start_date = datetime.date.today() - datetime.timedelta(days=sys.argv[1])
         end_date = datetime.date.today()
-    elif sys.arg > 2:
+    elif len(sys.arg) > 2:
         start_date = datetime.date.today() - datetime.timedelta(days=sys.argv[1])
         end_date = datetime.date.today() - datetime.timedelta(days=sys.argv[2])
     else:
