@@ -26,17 +26,20 @@ def bbjson_to_influxdb(host,port,database,json_data):
     client.switch_database(database)
     # Preparing json payload which will be pushed to InfluxDB
     for item in json_data:
+        date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
+        default_timestamp =  datetime.datetime.timestamp(date_obj)
         json_body = [{
         "measurement": "dailyBodyBatteryChargeDrain",
         "tags": {
             "date": item['date'],
         },
-        "time": item['startTimestampGMT'],
+        "time": item.get('startTimestampGMT',default_timestamp),
         "fields": {
-            "charged": item['charged'],
-            "drained": item['drained'],
+            "charged": item.get('charged', 0),
+            "drained": item.get('drained', 0),
             }
         }]
+    print(json_body)
     # Write points to InfluxDB
     client.write_points(json_body)
 
@@ -49,15 +52,17 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
     # Extracting relevant data from the JSON and converting to desired format, if not found assigning default values
     measurements = []
     for item in json_data:
-        for bodyBatteryValue in item['bodyBatteryValuesArray']:
+        date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
+        default_timestamp =  datetime.datetime.timestamp(date_obj)
+        for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
             measurements.append({
                 "measurement": "bodyBattery",
                 "tags": {
                     "date": item['date'],
                 },
-                "time": bodyBatteryValue[0],
+                "time": bodyBatteryValue[0] if len(bodyBatteryValue)>0 else default_timestamp,
                 "fields": {
-                    "bodyBatteryLevel": bodyBatteryValue[1]
+                    "bodyBatteryLevel": bodyBatteryValue[1] if len(bodyBatteryValue)>1 else 1,
                 }
             })
     client.write_points(measurements)
