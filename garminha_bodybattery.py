@@ -30,7 +30,7 @@ def bbjson_to_influxdb(host,port,database,json_data):
         if item['charged'] == None:
             print("Empty dataset, skipping")
             datasetEmpty = True
-        else
+        else:
             date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
             default_timestamp =  datetime.datetime.timestamp(date_obj)
             json_body = [{
@@ -61,7 +61,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
         if item['charged'] == None:
             print("Empty dataset, skipping")
             datasetEmpty = True
-        else
+        else:
             date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
             default_timestamp =  datetime.datetime.timestamp(date_obj)
             for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
