@@ -38,7 +38,7 @@ def heartrates_to_influxdb(host,port,database,json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
     measurements = []
-    for hrValue in json_data['heartRateValuesArray']:
+    for hrValue in json_data['heartRateValues']:
         date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
         formatted_date = date.isoformat()
         measurements.append({
