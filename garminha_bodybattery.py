@@ -25,6 +25,7 @@ def bbjson_to_influxdb(host,port,database,json_data):
 	# switch to specific database
     client.switch_database(database)
     # Preparing json payload which will be pushed to InfluxDB
+    print(json_data)
     for item in json_data:
         date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
         default_timestamp =  datetime.datetime.timestamp(date_obj)
@@ -39,7 +40,6 @@ def bbjson_to_influxdb(host,port,database,json_data):
             "drained": item.get('drained', 1),
             }
         }]
-    print(json_body)
     # Write points to InfluxDB
     client.write_points(json_body)
 
