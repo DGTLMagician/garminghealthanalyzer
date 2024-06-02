@@ -35,8 +35,8 @@ def bbjson_to_influxdb(host,port,database,json_data):
         },
         "time": item.get('startTimestampGMT',default_timestamp),
         "fields": {
-            "charged": item.get('charged', 0),
-            "drained": item.get('drained', 0),
+            "charged": item.get('charged', 1),
+            "drained": item.get('drained', 1),
             }
         }]
     print(json_body)
