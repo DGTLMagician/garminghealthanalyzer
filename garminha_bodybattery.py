@@ -74,7 +74,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
                         "tags": {
                             "date": item['date'],
                         },
-                        "time": bodyBatteryValue[0],
+                        "time": bodyBatteryValue[0]/1000,
                         "fields": {
                             "bodyBatteryLevel": bodyBatteryValue[1],
                         }
