@@ -106,7 +106,7 @@ if __name__ == "__main__":
         print("Working on Day: ")
         print(start_date)
         # fetching heartrate data for the day and writing to the InfluxDB
-        heartrate = garth.connectapi(f"/wellness-service/wellness/dailyHeartRate/{garth.client.profile["displayName"]}",params={"date": start_date.strftime('%Y-%m-%d')},)
+        heartrate = garth.connectapi(f"/wellness-service/wellness/dailyHeartRate/{garth.client.profile['displayName']}",params={"date": start_date.strftime('%Y-%m-%d')},)
         daily_overview_to_influxdb(influxhost,influxport,influxdatabase,heartrate)
         heartrates_to_influxdb(influxhost,influxport,influxdatabase,heartrate)
         start_date += delta
