@@ -63,16 +63,21 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
         else:
             datasetEmpty = False
             for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
-                measurements.append({
-                    "measurement": "bodyBattery",
-                    "tags": {
-                        "date": item['date'],
-                    },
-                    "time": bodyBatteryValue[0],
-                    "fields": {
-                        "bodyBatteryLevel": bodyBatteryValue[1],
-                    }
-                })
+                if bodyBatteryValue[1] == None:
+                    print("Empty dataset, skipping")
+                    datasetEmpty = True
+                else:
+                    datasetEmpty = False
+                    measurements.append({
+                        "measurement": "bodyBattery",
+                        "tags": {
+                            "date": item['date'],
+                        },
+                        "time": bodyBatteryValue[0],
+                        "fields": {
+                            "bodyBatteryLevel": bodyBatteryValue[1],
+                        }
+                    })
     if datasetEmpty == False:
         print(measurements)
         #client.write_points(measurements)
