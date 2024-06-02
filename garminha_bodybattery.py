@@ -69,7 +69,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
                     datasetEmpty = True
                 else:
                     datasetEmpty = False
-                    date = datetime.fromtimestamp(bodyBatteryValue[0])
+                    date = datetime.datetime.fromtimestamp(bodyBatteryValue[0])
                     formatted_date = date.isoformat()
                     measurements.append({
                         "measurement": "bodyBattery",
