@@ -22,35 +22,33 @@ from influxdb import InfluxDBClient
 def daily_overview_to_influxdb(host, port, database, json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
-    for item in json_data:
-        json_body = [{
-            "measurement": "dailyHeartRateOverview",
-            "tags": {"date": item.get('calendarDate'),},
-            "time": item.get('startTimestampGMT'),
-            "fields": {
-                "maxHeartRate": item.get('maxHeartRate'),
-                "minHeartRate": item.get('minHeartRate'),
-                "restingHeartRate": item.get('restingHeartRate'),
-            }
-        }]
-        client.write_points(json_body)
+    json_body = [{
+        "measurement": "dailyHeartRateOverview",
+        "tags": {"date": json_data['calendarDate'],},
+        "time": item.get('startTimestampGMT'),
+        "fields": {
+            "maxHeartRate": json_data['maxHeartRate'],
+            "minHeartRate": json_data['minHeartRate'],
+            "restingHeartRate": json_data['restingHeartRate'],
+        }
+    }]
+    client.write_points(json_body)
 
 def heartrates_to_influxdb(host,port,database,json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
     measurements = []
-    for item in json_data:
-        for hrValue in item.get('heartRateValuesArray', []):
-            date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
-            formatted_date = date.isoformat()
-            measurements.append({
-                "measurement": "heartRateValues",
-                "tags": {"date": item['date'],},
-                "time": formatted_date,
-                "fields": {
-                    "heartRateValue": hrValue[1],
-                }
-            })
+    for hrValue in json_data['heartRateValuesArray']:
+        date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
+        formatted_date = date.isoformat()
+        measurements.append({
+            "measurement": "heartRateValues",
+            "tags": {"date": item['date'],},
+            "time": formatted_date,
+            "fields": {
+                "heartRateValue": hrValue[1],
+            }
+        })
     client.write_points(measurements)
 
 # Entry point for the script
