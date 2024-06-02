@@ -63,6 +63,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
         else:
             datasetEmpty = False
             for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
+                print(bodyBatteryValue)
                 if bodyBatteryValue[1] == None:
                     print("Empty dataset, skipping")
                     datasetEmpty = True
