@@ -22,7 +22,6 @@ from influxdb import InfluxDBClient
 def daily_overview_to_influxdb(host, port, database, json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
-    json_data = json.loads(str(json_data))
     for item in json_data:
         json_body = [{
             "measurement": "dailyHeartRateOverview",
@@ -40,7 +39,6 @@ def heartrates_to_influxdb(host,port,database,json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
     measurements = []
-    json_data = json.loads(str(json_data))
     for item in json_data:
         for hrValue in item.get('heartRateValuesArray', []):
             date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
