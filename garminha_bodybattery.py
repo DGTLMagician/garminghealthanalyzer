@@ -79,8 +79,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
                         }
                     })
     if datasetEmpty == False:
-        print(measurements)
-        #client.write_points(measurements)
+        client.write_points(measurements)
 
 # Entry point for the script
 if __name__ == "__main__":
