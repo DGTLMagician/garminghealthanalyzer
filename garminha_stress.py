@@ -18,56 +18,40 @@ from getpass import getpass
 from openai import OpenAI
 from influxdb import InfluxDBClient
 
-# function to convert sleep json data to InfluxDB suitable format and write it to InfluxDB
-def sleepjson_to_influxdb(host,port,database,json_data):
-	# creating a connection to influxDB
-    client = InfluxDBClient(host,port,username=influxuser, password=influxpass)  # replace with your InfluxDB host and port
-	# switch to specific database
-    client.switch_database(database)  # replace with your database name
-    # Extracting relevant data from the JSON and converting to desired format, if not found assigning default values
-    sleepTimeSeconds = json_data['dailySleepDTO'].get('sleepTimeSeconds', 0)
-    if sleepTimeSeconds is not None:
-        sleepTimeSeconds = int(sleepTimeSeconds)
-    else:
-        sleepTimeSeconds = 0
-    napTimeSeconds = json_data['dailySleepDTO'].get('napTimeSeconds', 0)
-    if napTimeSeconds is not None:
-        napTimeSeconds = int(napTimeSeconds)
-    else:
-        napTimeSeconds = 0
-    # Preparing json payload which will be pushed to InfluxDB
+def daily_stress_overview_to_influxdb(host, port, database, json_data):
+    client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
+    client.switch_database(database)
     json_body = [{
-        "measurement": "dailySleepDTO",
-        "tags": {
-            "userID": json_data['dailySleepDTO'].get('userProfilePK', 0),
-            "sleepFromDevice": json_data['dailySleepDTO'].get('sleepFromDevice', 0),
-            "retro": json_data['dailySleepDTO'].get('retro', 0),
-            "sleppFromDevice": json_data['dailySleepDTO'].get('sleepFromDevice', 0),
-            "deviceRemCapable": json_data['dailySleepDTO'].get('deviceRemCapable', 0)
-        },
-        "time": json_data['dailySleepDTO'].get('calendarDate', 0),
+        "measurement": "dailyStressOverview",
+        "tags": {"date": json_data['calendarDate']},
+        "time": json_data['startTimestampGMT'],
         "fields": {
-            "sleepTimeSeconds": sleepTimeSeconds,
-            "napTimeSeconds": napTimeSeconds,
-            "autoSleepStartTimestampGMT": json_data['dailySleepDTO'].get('autoSleepStartTimestampGMT', 0),
-            "averageSpO2Value": float(json_data['dailySleepDTO'].get('averageSpO2Value', 0.0)),
-            "lowestSpO2Value": float(json_data['dailySleepDTO'].get('lowestSpO2Value', 0.0)),
-            "highestSpO2Value": float(json_data['dailySleepDTO'].get('highestSpO2Value', 0.0)),
-            "averageSpO2HRSleep": float(json_data['dailySleepDTO'].get('averageSpO2HRSleep', 0.0)),
-            "averageRespirationValue": float(json_data['dailySleepDTO'].get('averageRespirationValue', 0.0)),
-            "lowestRespirationValue": float(json_data['dailySleepDTO'].get('lowestRespirationValue', 0.0)),
-            "highestRespirationValue": float(json_data['dailySleepDTO'].get('highestRespirationValue', 0.0)),
-            "awakeCount": int(json_data['dailySleepDTO'].get('awakeCount', 0)),
-            "avgSleepStress": float(json_data['dailySleepDTO'].get('avgSleepStress', 0.0)),
-            "ageGroup": str(json_data['dailySleepDTO'].get('ageGroup', "Unknown")),
-            "sleepScoreFeedback": str(json_data['dailySleepDTO'].get('sleepScoreFeedback', "Unknown")),
-            "sleepScoreInsight": str(json_data['dailySleepDTO'].get('sleepScoreInsight', "Unknown")),
-            "sleepVersion": str(json_data['dailySleepDTO'].get('sleepVersion', "Unknown")),
-            "appType": "APP"
+            "stressLevel": json_data['stressLevel'],
+            "stressDuration": json_data['stressQualificationTimeInSeconds']
         }
     }]
-    # Write points to InfluxDB
     client.write_points(json_body)
+
+def stress_values_to_influxdb(host, port, database, json_data):
+    client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
+    client.switch_database(database)
+    measurements = []
+    if json_data['stressLevels']:
+        for stress in json_data['stressLevels']:
+            if stress[1] is None:
+                print("Empty value, skipping.")
+            else:
+                date = datetime.datetime.fromtimestamp(stress[0]/1000)
+                formatted_date = date.isoformat()
+                measurements.append({
+                    "measurement": "stressValues",
+                    "tags": {"date": json_data['calendarDate']},
+                    "time": formatted_date,
+                    "fields": {
+                        "stressValue": stress[1],
+                    }
+                })
+    client.write_points(measurements)
 
 # Entry point for the script
 if __name__ == "__main__":
@@ -122,7 +106,8 @@ if __name__ == "__main__":
         # fetching sleep data for the day and writing to the InfluxDB
         stress = garth.connectapi(f"/wellness-service/wellness/dailyStress/{start_date.strftime('%Y-%m-%d')}")
         #sleepjson_to_influxdb(influxhost,influxport,influxdatabase,sleep)
-        print(stress)
+        daily_stress_overview_to_influxdb(influxhost,influxport,influxdatabase,stress)
+        stress_values_to_influxdb(influxhost,influxport,influxdatabase,stress)
         start_date += delta
 
         # random sleep period to prevent detection
