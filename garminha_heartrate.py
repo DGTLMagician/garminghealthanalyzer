@@ -38,20 +38,21 @@ def heartrates_to_influxdb(host,port,database,json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
     measurements = []
-    for hrValue in json_data['heartRateValues']:
-        if hrValue[1] == None:
-            print("Empty value, skipping.")
-        else:
-            date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
-            formatted_date = date.isoformat()
-            measurements.append({
-                "measurement": "heartRateValues",
-                "tags": {"date": json_data['calendarDate'],},
-                "time": formatted_date,
-                "fields": {
-                    "heartRateValue": hrValue[1],
-                }
-            })
+    if json_data['heartRateValues']:
+        for hrValue in json_data['heartRateValues']:
+            if hrValue[1] == None:
+                print("Empty value, skipping.")
+            else:
+                date = datetime.datetime.fromtimestamp(hrValue[0]/1000)
+                formatted_date = date.isoformat()
+                measurements.append({
+                    "measurement": "heartRateValues",
+                    "tags": {"date": json_data['calendarDate'],},
+                    "time": formatted_date,
+                    "fields": {
+                        "heartRateValue": hrValue[1],
+                    }
+                })
     client.write_points(measurements)
 
 # Entry point for the script
