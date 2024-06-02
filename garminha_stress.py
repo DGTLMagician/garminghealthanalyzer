@@ -26,8 +26,8 @@ def daily_stress_overview_to_influxdb(host, port, database, json_data):
         "tags": {"date": json_data['calendarDate']},
         "time": json_data['startTimestampGMT'],
         "fields": {
-            "stressLevel": json_data['stressLevel'],
-            "stressDuration": json_data['stressQualificationTimeInSeconds']
+            "maxStressLevel": json_data['maxStressLevel'],
+            "avgStressLevel": json_data['avgStressLevel']
         }
     }]
     client.write_points(json_body)
@@ -36,8 +36,8 @@ def stress_values_to_influxdb(host, port, database, json_data):
     client = InfluxDBClient(host,port,username=influxuser, password=influxpass)
     client.switch_database(database)
     measurements = []
-    if json_data['stressLevels']:
-        for stress in json_data['stressLevels']:
+    if json_data['stressValuesArray']:
+        for stress in json_data['stressValuesArray']:
             if stress[1] is None:
                 print("Empty value, skipping.")
             else:
