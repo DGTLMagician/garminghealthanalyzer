@@ -25,7 +25,7 @@ def daily_overview_to_influxdb(host, port, database, json_data):
     json_body = [{
         "measurement": "dailyHeartRateOverview",
         "tags": {"date": json_data['calendarDate'],},
-        "time": item.get('startTimestampGMT'),
+        "time": json_data['startTimestampGMT'],
         "fields": {
             "maxHeartRate": json_data['maxHeartRate'],
             "minHeartRate": json_data['minHeartRate'],
@@ -43,7 +43,7 @@ def heartrates_to_influxdb(host,port,database,json_data):
         formatted_date = date.isoformat()
         measurements.append({
             "measurement": "heartRateValues",
-            "tags": {"date": item['date'],},
+            "tags": {"date": json_data['calendarDate'],},
             "time": formatted_date,
             "fields": {
                 "heartRateValue": hrValue[1],
