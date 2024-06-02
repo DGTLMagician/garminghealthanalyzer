@@ -25,23 +25,28 @@ def bbjson_to_influxdb(host,port,database,json_data):
 	# switch to specific database
     client.switch_database(database)
     # Preparing json payload which will be pushed to InfluxDB
-    print(json_data)
+    datasetEmpty = False    
     for item in json_data:
-        date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
-        default_timestamp =  datetime.datetime.timestamp(date_obj)
-        json_body = [{
-        "measurement": "dailyBodyBatteryChargeDrain",
-        "tags": {
-            "date": item['date'],
-        },
-        "time": item.get('startTimestampGMT',default_timestamp),
-        "fields": {
-            "charged": item.get('charged', 1),
-            "drained": item.get('drained', 1),
-            }
-        }]
+        if item['charged'] == None:
+            print("Empty dataset, skipping")
+            datasetEmpty = True
+        else
+            date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
+            default_timestamp =  datetime.datetime.timestamp(date_obj)
+            json_body = [{
+            "measurement": "dailyBodyBatteryChargeDrain",
+            "tags": {
+                "date": item['date'],
+            },
+            "time": item.get('startTimestampGMT',default_timestamp),
+            "fields": {
+                "charged": item.get('charged', 1),
+                "drained": item.get('drained', 1),
+                }
+            }]
     # Write points to InfluxDB
-    client.write_points(json_body)
+    if datasetEmpty == False:
+        client.write_points(json_body)
 
 # function to convert body battery json data to InfluxDB suitable format and write it to InfluxDB
 def bbvaluesjson_to_influxdb(host,port,database,json_data):
@@ -51,21 +56,27 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
     client.switch_database(database)  # replace with your database name
     # Extracting relevant data from the JSON and converting to desired format, if not found assigning default values
     measurements = []
+    datasetEmpty = False    
     for item in json_data:
-        date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
-        default_timestamp =  datetime.datetime.timestamp(date_obj)
-        for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
-            measurements.append({
-                "measurement": "bodyBattery",
-                "tags": {
-                    "date": item['date'],
-                },
-                "time": bodyBatteryValue[0] if len(bodyBatteryValue)>0 else default_timestamp,
-                "fields": {
-                    "bodyBatteryLevel": bodyBatteryValue[1] if len(bodyBatteryValue)>1 else 1,
-                }
-            })
-    client.write_points(measurements)
+        if item['charged'] == None:
+            print("Empty dataset, skipping")
+            datasetEmpty = True
+        else
+            date_obj = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
+            default_timestamp =  datetime.datetime.timestamp(date_obj)
+            for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
+                measurements.append({
+                    "measurement": "bodyBattery",
+                    "tags": {
+                        "date": item['date'],
+                    },
+                    "time": bodyBatteryValue[0] if len(bodyBatteryValue)>0 else default_timestamp,
+                    "fields": {
+                        "bodyBatteryLevel": bodyBatteryValue[1] if len(bodyBatteryValue)>1 else 1,
+                    }
+                })
+    if datasetEmpty == False:
+        client.write_points(measurements)
 
 # Entry point for the script
 if __name__ == "__main__":
