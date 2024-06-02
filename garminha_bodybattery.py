@@ -31,6 +31,7 @@ def bbjson_to_influxdb(host,port,database,json_data):
             print("Empty dataset, skipping")
             datasetEmpty = True
         else:
+            datasetEmpty = False
             json_body = [{
             "measurement": "dailyBodyBatteryChargeDrain",
             "tags": {
@@ -60,6 +61,7 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
             print("Empty dataset, skipping")
             datasetEmpty = True
         else:
+            datasetEmpty = False
             for bodyBatteryValue in item.get('bodyBatteryValuesArray', []):
                 measurements.append({
                     "measurement": "bodyBattery",
@@ -72,7 +74,8 @@ def bbvaluesjson_to_influxdb(host,port,database,json_data):
                     }
                 })
     if datasetEmpty == False:
-        client.write_points(measurements)
+        print(measurements)
+        #client.write_points(measurements)
 
 # Entry point for the script
 if __name__ == "__main__":
