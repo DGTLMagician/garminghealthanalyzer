@@ -28,13 +28,9 @@ def sleepjson_to_influxdb(host,port,database,json_data):
     sleepTimeSeconds = json_data['dailySleepDTO'].get('sleepTimeSeconds', 0)
     if sleepTimeSeconds is not None:
         sleepTimeSeconds = int(sleepTimeSeconds)
-    else:
-        sleepTimeSeconds = 0
     napTimeSeconds = json_data['dailySleepDTO'].get('napTimeSeconds', 0)
     if napTimeSeconds is not None:
         napTimeSeconds = int(napTimeSeconds)
-    else:
-        napTimeSeconds = 0
     # Preparing json payload which will be pushed to InfluxDB
     json_body = [{
         "measurement": "dailySleepDTO",
@@ -47,8 +43,10 @@ def sleepjson_to_influxdb(host,port,database,json_data):
         },
         "time": json_data['dailySleepDTO'].get('calendarDate', 0),
         "fields": {
-            "sleepTimeSeconds": sleepTimeSeconds,
-            "napTimeSeconds": napTimeSeconds,
+            if sleepTimeSeconds is not None:
+                "sleepTimeSeconds": sleepTimeSeconds,
+            if napTimeSeconds is not None:
+                "napTimeSeconds": napTimeSeconds,
             "autoSleepStartTimestampGMT": json_data['dailySleepDTO'].get('autoSleepStartTimestampGMT', 0),
             "averageSpO2Value": float(json_data['dailySleepDTO'].get('averageSpO2Value', 0.0)),
             "lowestSpO2Value": float(json_data['dailySleepDTO'].get('lowestSpO2Value', 0.0)),
